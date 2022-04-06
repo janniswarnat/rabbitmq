@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.expose: "true"
+    kompose.service.type: loadbalancer
+    kompose.version: 1.26.1 (1b040dd2)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: rabbitmq
+  name: rabbitmq
+spec:
+  ports:
+    - name: "1883"
+      port: 1883
+      targetPort: 1883
+    - name: "15672"
+      port: 15672
+      targetPort: 15672
+    - name: "15670"
+      port: 15670
+      targetPort: 15670
+    - name: "15675"
+      port: 15675
+      targetPort: 15675
+    - name: "5672"
+      port: 5672
+      targetPort: 5672
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+  loadBalancerIP: 129.26.168.109
+  selector:
+    io.kompose.service: rabbitmq
+status:
+  loadBalancer: {}

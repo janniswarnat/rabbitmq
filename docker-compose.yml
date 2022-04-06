@@ -1,0 +1,35 @@
+version: '3.5'
+services:
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    hostname: knowledge-rabbit
+    environment:
+      - "RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log [{console,[{enabled,true},{level,info}]}]"
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
+    ports:
+      - 1883:1883 # rabbitmq_mqtt
+      - 15672:15672 # management
+      - 15670:15670 # rabbitmq_web_mqtt
+      - 15675:15675 # rabbitmq_web_mqtt_examples
+      - 5672:5672 # AMQP
+    labels:
+      kompose.service.type: loadbalancer
+      kompose.service.expose: "true"
+    configs:
+      - source: rabbitmq-conf
+        target: "/etc/rabbitmq/conf.d/20-rabbitmq-docker.conf"
+      - source: enabled-plugins
+        target: "/etc/rabbitmq/enabled_plugins"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "10"
+
+configs:
+  rabbitmq-conf:
+    file: "./volumes/rabbitmq/rabbitmq-docker.config"
+  enabled-plugins:
+    file: "./volumes/rabbitmq/enabled_plugins"
